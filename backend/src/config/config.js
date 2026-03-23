@@ -32,6 +32,10 @@ if (!process.env.GOOGLE_USER) {
   throw new Error("GOOGLE_USER is not defined in environment variables");
 }
 
+if (!process.env.MISTRAL_API_KEY) {
+  throw new Error("GOOGLE_USER is not defined in environment variables");
+}
+
 const config = {
   NODE_ENV: process.env.NODE_ENV || "development",
   MONGO_URI: process.env.MONGO_URI,
@@ -42,6 +46,7 @@ const config = {
   GOOGLE_REFRESH_TOKEN: process.env.GOOGLE_REFRESH_TOKEN,
   GOOGLE_USER: process.env.GOOGLE_USER,
   FRONTEND_URL: process.env.FRONTEND_URL,
+  MISTRAL_API_KEY: process.env.MISTRAL_API_KEY
 };
 
 export default config;
