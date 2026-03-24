@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth.route.js";
 import cors from 'cors';
 import config from "./config/config.js";
+import morgan from 'morgan'
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.options("/{*any}", cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(morgan("dev"))
 
 app.get("/", (_req, res) => {
   res.status(200).json({
