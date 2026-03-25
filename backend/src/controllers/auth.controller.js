@@ -4,6 +4,7 @@ import userModel from "../models/user.model.js";
 import refreshTokenModel from "../models/refreshToken.model.js";
 import config from "../config/config.js";
 import {
+  sendPasswordResetEmail,
   sendVerificationEmail,
   sendVerifiedEmail,
 } from "../services/emailService.js";
@@ -131,6 +132,7 @@ export async function login(req, res) {
  */
 export async function refresh(req, res) {
   const rawRefreshToken = req.cookies?.refreshToken;
+  console.log(rawRefreshToken);
 
   if (!rawRefreshToken) {
     return res
@@ -279,6 +281,104 @@ export async function verifyEmail(req, res) {
         : error.name === "JsonWebTokenError"
           ? "Invalid verification link."
           : "Something went wrong. Please try again.";
+
+    return res.status(400).json({ success: false, message });
+  }
+}
+
+/**
+ * @desc Forgot password — send reset link
+ * @route POST /api/auth/forgot-password
+ * @access Public
+ */
+export async function forgotPassword(req, res) {
+  const { email } = req.body;
+
+  const user = await userModel.findOne({ email });
+
+  if (!user) {
+    return res.status(200).json({
+      success: true,
+      message: "If this email exists, a reset link has been sent",
+    });
+  }
+
+  const resetToken = jwt.sign(
+    { email: user.email, purpose: "reset-password" },
+    config.JWT_SECRET,
+    { expiresIn: "10m" }
+  );
+
+  const resetLink = `${config.FRONTEND_URL}/reset-password?token=${resetToken}`;
+
+  await sendPasswordResetEmail(email, resetLink);
+
+  return res.status(200).json({
+    success: true,
+    message: "Password reset link sent to email",
+  });
+}
+
+/**
+ * @desc Reset password
+ * @route POST /api/auth/reset-password
+ * @access Public
+ */
+export async function resetPassword(req, res) {
+  const { token } = req.query;
+  const { password } = req.body;
+  console.log(token);
+
+  if (!token) {
+    return res.status(400).json({
+      success: false,
+      message: "Token is required",
+    });
+  }
+
+  try {
+    const { email, purpose } = jwt.verify(token, config.JWT_SECRET);
+  
+    if (purpose !== "reset-password") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid token",
+      });
+    }
+
+    const user = await userModel.findOne({ email });
+
+    if (password.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 8 characters",
+      });
+    }
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    user.password = password;
+    await user.save();
+
+    await refreshTokenModel.updateMany(
+      { userId: user._id },
+      { isRevoked: true, revokedAt: new Date() }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Password reset successful",
+    });
+  } catch (error) {
+    const message =
+      error.name === "TokenExpiredError"
+        ? "Reset link expired"
+        : "Invalid or expired token";
 
     return res.status(400).json({ success: false, message });
   }

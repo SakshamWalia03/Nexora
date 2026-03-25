@@ -23,7 +23,7 @@ const Login = () => {
     try {
       await handleLogin(form);
       toast.success("Login successful");
-      navigate("/dashboard");
+      navigate("/");
     } catch (error) {
       console.error(error);
       toast.error(error?.message || "Login failed");
@@ -311,13 +311,13 @@ const Login = () => {
 
             {/* Forgot password */}
             <div className="flex justify-end -mt-1">
-              <button
-                type="button"
+              <Link
+                to="/forgot-password"
                 className="text-xs text-slate-500 hover:text-violet-400 transition-colors"
                 style={{ fontFamily: "'DM Sans', sans-serif" }}
               >
                 Forgot password?
-              </button>
+              </Link>
             </div>
 
             <button

@@ -7,6 +7,8 @@ import {
   logoutAll,
   getMe,
   verifyEmail,
+  forgotPassword,
+  resetPassword,
 } from "../controllers/auth.controller.js";
 import {
   registerValidator,
@@ -23,5 +25,7 @@ router.get("/verify-email", verifyEmail);
 router.get("/get-me", authenticate, getMe);
 router.post("/logout", authenticate, logout);
 router.post("/logout-all", authenticate, logoutAll);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 
 export default router;

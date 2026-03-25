@@ -6,6 +6,8 @@ import {
   generateVerificationTextTemplate,
   generateVerifiedHTMLTemplate,
   generateVerifiedTextTemplate,
+  generateResetPasswordHTMLTemplate,
+  generateResetPasswordTextTemplate,
 } from "../utils/emailTemplates.js";
 
 // ── OAuth2 client setup ──
@@ -120,4 +122,27 @@ const sendVerifiedEmail = async (to) => {
   }
 };
 
-export { sendVerificationEmail, sendVerifiedEmail };
+const sendPasswordResetEmail = async (to, resetLink) => {
+  const subject = "Reset your password - Nexora";
+
+  try {
+    const messageId = await sendEmail(
+      to,
+      subject,
+      generateResetPasswordHTMLTemplate(resetLink),
+      generateResetPasswordTextTemplate(resetLink),
+    );
+
+    console.log(
+      `[Email] Password reset link sent to ${to} | id: ${messageId}`,
+    );
+  } catch (error) {
+    console.error(
+      `[Email] Failed to send password reset email to ${to}:`,
+      error.message,
+    );
+    throw new Error("Failed to send password reset email. Please try again.");
+  }
+};
+
+export { sendVerificationEmail, sendVerifiedEmail, sendPasswordResetEmail };

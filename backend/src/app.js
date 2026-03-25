@@ -4,6 +4,7 @@ import authRouter from "./routes/auth.route.js";
 import cors from 'cors';
 import config from "./config/config.js";
 import morgan from 'morgan'
+import chatRouter from "./routes/chat.route.js";
 
 const app = express();
 
@@ -37,7 +38,7 @@ app.options("/{*any}", cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(morgan("dev"))
+app.use(morgan("tiny"))
 
 app.get("/", (_req, res) => {
   res.status(200).json({
@@ -47,5 +48,6 @@ app.get("/", (_req, res) => {
 });
 
 app.use("/api/auth", authRouter);
+app.use("/api/chats",chatRouter)
 
 export default app;

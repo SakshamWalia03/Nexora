@@ -420,9 +420,250 @@ If you didn't create a Nexora account, please ignore this email.
 `.trim();
 };
 
+
+const generateResetPasswordHTMLTemplate = (resetLink) => {
+  return `<!DOCTYPE html>
+<html lang="en" style="color-scheme:light !important;">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="color-scheme" content="light" />
+<meta name="supported-color-schemes" content="light" />
+<title>Nexora — Reset your password</title>
+<!--[if mso]>
+<noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+<![endif]-->
+<style>
+  :root { color-scheme: light only; }
+  * { color-scheme: light only !important; }
+  @media (prefers-color-scheme: dark) {
+    body, table, td, div, p, a, h1, span {
+      background-color: inherit !important;
+      color: inherit !important;
+    }
+  }
+</style>
+</head>
+
+<body style="
+  margin:0;
+  padding:0;
+  background-color:#fffbeb !important;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  -webkit-text-size-adjust:100%;
+  -ms-text-size-adjust:100%;
+  color-scheme:light only;
+">
+
+<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">
+  Reset your Nexora password securely.
+</div>
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#fffbeb !important;min-height:100vh;">
+<tr>
+<td align="center" style="padding:48px 16px;">
+
+  <table width="100%" cellpadding="0" cellspacing="0"
+    style="
+      max-width:520px;
+      background-color:#ffffff !important;
+      border-radius:24px;
+      border:2px solid #fde68a;
+      overflow:hidden;
+      box-shadow:0 8px 40px rgba(245,158,11,0.10);
+    ">
+
+    <!-- Rainbow top bar -->
+    <tr>
+      <td style="height:6px;background:linear-gradient(90deg,#f59e0b,#d97706,#f97316,#fbbf24,#fcd34d);"></td>
+    </tr>
+
+    <!-- Logo -->
+    <tr>
+      <td align="center" style="padding:36px 48px 0;background-color:#ffffff !important;">
+        <div style="
+          background-color:#ede9fe !important;
+          border:2px solid #c4b5fd;
+          border-radius:50px;
+          padding:8px 24px;
+          display:inline-block;
+          font-weight:900;
+          font-size:16px;
+          letter-spacing:0.06em;
+          color:#7c3aed !important;
+        ">
+          ✦ NEXORA
+        </div>
+      </td>
+    </tr>
+
+    <!-- Reset icon -->
+    <tr>
+      <td align="center" style="padding:28px 48px 0;background-color:#ffffff !important;">
+        <div style="
+          width:64px;
+          height:64px;
+          background-color:#fef3c7 !important;
+          border:2px solid #fde68a;
+          border-radius:50%;
+          font-size:28px;
+          line-height:64px;
+          text-align:center;
+          display:inline-block;
+          color:#d97706 !important;
+          font-weight:900;
+        ">🔒</div>
+      </td>
+    </tr>
+
+    <!-- Heading -->
+    <tr>
+      <td align="center" style="padding:20px 48px 0;background-color:#ffffff !important;">
+        <h1 style="
+          margin:0;
+          font-size:28px;
+          font-weight:900;
+          letter-spacing:-0.03em;
+          color:#78350f !important;
+          text-align:center;
+        ">
+          Reset your password
+        </h1>
+        <p style="
+          margin:10px 0 0;
+          font-size:15px;
+          color:#6b7280 !important;
+          line-height:1.7;
+          text-align:center;
+        ">
+          We received a request to reset your password. Click the button below to create a new one.
+        </p>
+      </td>
+    </tr>
+
+    <!-- CTA Button -->
+    <tr>
+      <td align="center" style="padding:32px 48px 0;background-color:#ffffff !important;">
+        <a href="${resetLink}"
+          target="_blank"
+          style="
+            display:inline-block;
+            background-color:#d97706 !important;
+            background:linear-gradient(135deg,#d97706,#f59e0b);
+            color:#ffffff !important;
+            font-size:15px;
+            font-weight:800;
+            text-decoration:none;
+            padding:15px 44px;
+            border-radius:50px;
+            letter-spacing:0.02em;
+            box-shadow:0 4px 20px rgba(217,119,6,0.35);
+            text-align:center;
+          "
+        >
+          Reset password &rarr;
+        </a>
+      </td>
+    </tr>
+
+    <!-- Expiry -->
+    <tr>
+      <td align="center" style="padding:14px 48px 0;background-color:#ffffff !important;">
+        <p style="margin:0;font-size:12px;color:#9ca3af !important;text-align:center;">
+          Link expires in <span style="color:#d97706 !important;font-weight:700;">10 minutes</span>
+        </p>
+      </td>
+    </tr>
+
+    <!-- OR divider — fully centered -->
+    <tr>
+      <td align="center" style="padding:24px 48px 0;background-color:#ffffff !important;">
+        <table width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td width="45%" style="height:1px;background-color:#fde68a !important;vertical-align:middle;"></td>
+            <td width="10%" align="center" style="font-size:11px;color:#fbbf24 !important;font-weight:700;padding:0 8px;white-space:nowrap;text-align:center;">OR</td>
+            <td width="45%" style="height:1px;background-color:#fde68a !important;vertical-align:middle;"></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+
+    <!-- Fallback link -->
+    <tr>
+      <td align="center" style="padding:16px 48px 0;background-color:#ffffff !important;">
+        <div style="background-color:#fffbeb !important;border:1.5px dashed #fde68a;border-radius:12px;padding:14px 18px;text-align:center;">
+          <p style="margin:0 0 6px;font-size:11px;color:#f59e0b !important;letter-spacing:0.06em;text-transform:uppercase;font-weight:700;text-align:center;">
+            Button not working? Paste this in your browser
+          </p>
+          <p style="
+            margin:0;
+            font-size:11px;
+            color:#d97706 !important;
+            word-break:break-all;
+            line-height:1.6;
+            text-align:center;
+          ">
+            ${resetLink}
+          </p>
+        </div>
+      </td>
+    </tr>
+
+    <!-- Security note -->
+    <tr>
+      <td align="center" style="padding:16px 48px 0;background-color:#ffffff !important;">
+        <div style="background-color:#fef3c7 !important;border:1.5px solid #fde68a;border-radius:12px;padding:12px 16px;text-align:center;">
+          <p style="margin:0;font-size:12px;color:#92400e !important;line-height:1.6;text-align:center;">
+            <strong>Didn't request this?</strong> You can safely ignore this email. Your password won't change unless you click the button above.
+          </p>
+        </div>
+      </td>
+    </tr>
+
+    <!-- Footer -->
+    <tr>
+      <td align="center" style="padding:24px 48px 36px;background-color:#ffffff !important;">
+        <p style="margin:0 0 4px;font-size:12px;color:#9ca3af !important;text-align:center;">
+          You received this because a password reset was requested for this email.
+        </p>
+        <p style="margin:0;font-size:12px;color:#c4b5fd !important;text-align:center;">
+          &copy; ${new Date().getFullYear()} Nexora &nbsp;&middot;&nbsp; Made with &hearts;
+        </p>
+      </td>
+    </tr>
+
+  </table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>`;
+};
+
+const generateResetPasswordTextTemplate = (resetLink) => {
+  return `
+Nexora — Reset your password
+
+We received a request to reset your password. Click the link below to create a new one:
+
+${resetLink}
+
+This link expires in 10 minutes.
+
+Didn't request this? You can safely ignore this email. Your password won't change unless you click the link above.
+
+© ${new Date().getFullYear()} Nexora
+`.trim();
+};
+
 export {
   generateVerificationHTMLTemplate,
   generateVerificationTextTemplate,
   generateVerifiedHTMLTemplate,
   generateVerifiedTextTemplate,
+  generateResetPasswordHTMLTemplate,
+  generateResetPasswordTextTemplate,
 };
