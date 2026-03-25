@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
-import { Link, useNavigate } from "react-router";
+import { Link, Navigate, useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
+import { useSelector } from "react-redux";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -9,6 +10,9 @@ const Login = () => {
   const [focused, setFocused] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const { handleLogin } = useAuth();
+
+  const user = useSelector((state) => state.auth.user);
+  const loading = useSelector((state) => state.auth.loading);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -19,7 +23,7 @@ const Login = () => {
     try {
       await handleLogin(form);
       toast.success("Login successful");
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       console.error(error);
       toast.error(error?.message || "Login failed");
@@ -70,7 +74,9 @@ const Login = () => {
       ),
     },
   ];
-
+  if (!loading && user) {
+    return <Navigate to="/" replace />;
+  }
   return (
     <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background grid */}
