@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import React, { useEffect, useRef, useState, lazy, Suspense } from "react";
+const ReactMarkdown = React.lazy(() => import("react-markdown"));
+const remarkGfm = React.lazy(() => import("remark-gfm"));
 import { useDispatch, useSelector } from "react-redux";
 import { useChat } from "../hooks/useChat";
 import { setCurrentChatId } from "../chat.slice";
@@ -157,7 +157,9 @@ const AIBubble = ({ content }) => {
             prose-a:text-cyan-400 prose-a:no-underline hover:prose-a:underline"
           style={{ fontFamily: "'DM Sans', sans-serif" }}
         >
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{cleaned}</ReactMarkdown>
+          <React.Suspense fallback={<p className="text-slate-400 text-xs">Loading...</p>}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{cleaned}</ReactMarkdown>
+          </React.Suspense>
         </div>
       </div>
     </div>
