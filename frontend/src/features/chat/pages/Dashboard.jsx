@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, lazy, Suspense } from "react";
 const ReactMarkdown = React.lazy(() => import("react-markdown"));
-const remarkGfm = React.lazy(() => import("remark-gfm"));
+import remarkGfm from "remark-gfm";
 import { useDispatch, useSelector } from "react-redux";
 import { useChat } from "../hooks/useChat";
 import { setCurrentChatId } from "../chat.slice";
