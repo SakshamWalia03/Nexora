@@ -40,6 +40,22 @@ if (!process.env.TAVILY_API_KEY) {
   throw new Error("TAVILY_API_KEY is not defined in environment variables");
 }
 
+if (!process.env.GITHUB_CLIENT_ID) {
+  throw new Error("GITHUB_CLIENT_ID is not defined in environment variables");
+}
+
+if (!process.env.GITHUB_CLIENT_SECRET) {
+  throw new Error("GITHUB_CLIENT_SECRET is not defined in environment variables");
+}
+
+if (!process.env.GITHUB_REDIRECT_URI) {
+  throw new Error("GITHUB_REDIRECT_URI is not defined in environment variables");
+}
+
+if (!process.env.GOOGLE_REDIRECT_URI) {
+  throw new Error("GOOGLE_REDIRECT_URI is not defined in environment variables");
+}
+
 const config = {
   NODE_ENV: process.env.NODE_ENV || "development",
   MONGO_URI: process.env.MONGO_URI,
@@ -51,7 +67,12 @@ const config = {
   GOOGLE_USER: process.env.GOOGLE_USER,
   FRONTEND_URL: process.env.FRONTEND_URL,
   MISTRAL_API_KEY: process.env.MISTRAL_API_KEY,
-  TAVILY_API_KEY: process.env.TAVILY_API_KEY
+  TAVILY_API_KEY: process.env.TAVILY_API_KEY,
+  GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
+  GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
+  GITHUB_REDIRECT_URI: process.env.GITHUB_REDIRECT_URI,
+  GOOGLE_REDIRECT_URI: process.env.GOOGLE_REDIRECT_URI,
+
 };
 
 export default config;

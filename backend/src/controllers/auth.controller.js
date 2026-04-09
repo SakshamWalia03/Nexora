@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
+import passport from "../config/passport.js";
 import userModel from "../models/user.model.js";
 import refreshTokenModel from "../models/refreshToken.model.js";
 import config from "../config/config.js";
@@ -132,7 +133,6 @@ export async function login(req, res) {
  */
 export async function refresh(req, res) {
   const rawRefreshToken = req.cookies?.refreshToken;
-  console.log(rawRefreshToken);
 
   if (!rawRefreshToken) {
     return res
@@ -144,7 +144,6 @@ export async function refresh(req, res) {
   const storedToken = await refreshTokenModel.findOne({ tokenHash });
 
   if (!storedToken || !storedToken.isValid()) {
-    // Potential reuse attack — revoke all sessions for this user
     if (storedToken) {
       await refreshTokenModel.updateMany(
         { userId: storedToken.userId },
@@ -163,12 +162,10 @@ export async function refresh(req, res) {
   if (!user)
     return res.status(401).json({ success: false, message: "User not found" });
 
-  // Revoke current token (rotation)
   storedToken.isRevoked = true;
   storedToken.revokedAt = new Date();
   await storedToken.save();
 
-  // Issue new token pair
   const { accessToken, rawRefreshToken: newRawRefreshToken } =
     generateTokens(user);
 
@@ -303,10 +300,18 @@ export async function forgotPassword(req, res) {
     });
   }
 
+  // Block OAuth-only accounts from using password reset
+  if (!user.password) {
+    return res.status(200).json({
+      success: true,
+      message: "If this email exists, a reset link has been sent",
+    });
+  }
+
   const resetToken = jwt.sign(
     { email: user.email, purpose: "reset-password" },
     config.JWT_SECRET,
-    { expiresIn: "10m" }
+    { expiresIn: "10m" },
   );
 
   const resetLink = `${config.FRONTEND_URL}/reset-password?token=${resetToken}`;
@@ -327,7 +332,6 @@ export async function forgotPassword(req, res) {
 export async function resetPassword(req, res) {
   const { token } = req.query;
   const { password } = req.body;
-  console.log(token);
 
   if (!token) {
     return res.status(400).json({
@@ -338,7 +342,7 @@ export async function resetPassword(req, res) {
 
   try {
     const { email, purpose } = jwt.verify(token, config.JWT_SECRET);
-  
+
     if (purpose !== "reset-password") {
       return res.status(400).json({
         success: false,
@@ -347,13 +351,6 @@ export async function resetPassword(req, res) {
     }
 
     const user = await userModel.findOne({ email });
-
-    if (password.length < 8) {
-      return res.status(400).json({
-        success: false,
-        message: "Password must be at least 8 characters",
-      });
-    }
 
     if (!user) {
       return res.status(400).json({
@@ -367,7 +364,7 @@ export async function resetPassword(req, res) {
 
     await refreshTokenModel.updateMany(
       { userId: user._id },
-      { isRevoked: true, revokedAt: new Date() }
+      { isRevoked: true, revokedAt: new Date() },
     );
 
     return res.status(200).json({
@@ -383,3 +380,63 @@ export async function resetPassword(req, res) {
     return res.status(400).json({ success: false, message });
   }
 }
+
+// ── OAuth helpers ──
+
+const handleOAuthCallback = async (req, res) => {
+  try {
+    const user = req.user;
+    const { accessToken, rawRefreshToken } = generateTokens(user);
+    await saveRefreshToken(user._id, rawRefreshToken, req);
+    setTokenCookies(res, accessToken, rawRefreshToken);
+    res.redirect(`${config.FRONTEND_URL}/`);
+  } catch {
+    res.redirect(`${config.FRONTEND_URL}/login?error=oauth_failed`);
+  }
+};
+
+/**
+ * @desc Redirect to Google OAuth
+ * @route GET /api/auth/google
+ * @access Public
+ */
+export const googleAuth = passport.authenticate("google", {
+  scope: ["profile", "email"],
+  session: false,
+});
+
+/**
+ * @desc Google OAuth callback
+ * @route GET /api/auth/google/callback
+ * @access Public
+ */
+export const googleCallback = [
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: `${config.FRONTEND_URL}/login?error=google_failed`,
+  }),
+  handleOAuthCallback,
+];
+
+/**
+ * @desc Redirect to GitHub OAuth
+ * @route GET /api/auth/github
+ * @access Public
+ */
+export const githubAuth = passport.authenticate("github", {
+  scope: ["user:email"],
+  session: false,
+});
+
+/**
+ * @desc GitHub OAuth callback
+ * @route GET /api/auth/github/callback
+ * @access Public
+ */
+export const githubCallback = [
+  passport.authenticate("github", {
+    session: false,
+    failureRedirect: `${config.FRONTEND_URL}/login?error=github_failed`,
+  }),
+  handleOAuthCallback,
+];

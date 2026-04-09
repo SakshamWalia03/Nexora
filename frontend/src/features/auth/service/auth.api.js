@@ -87,3 +87,11 @@ export async function resetPassword({ token, password }) {
     const response = await api.post(`/auth/reset-password?token=${token}`, { password });
     return response.data;
 }
+
+export function loginWithGoogle() {
+  window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
+}
+
+export function loginWithGithub() {
+  window.location.href = `${import.meta.env.VITE_API_URL}/auth/github`;
+}

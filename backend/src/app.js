@@ -5,6 +5,7 @@ import cors from 'cors';
 import config from "./config/config.js";
 import morgan from 'morgan'
 import chatRouter from "./routes/chat.route.js";
+import passport from "./config/passport.js";
 
 const app = express();
 
@@ -38,7 +39,8 @@ app.options("/{*any}", cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(morgan("tiny"))
+app.use(morgan("tiny"));
+app.use(passport.initialize());
 
 app.get("/", (_req, res) => {
   res.status(200).json({
